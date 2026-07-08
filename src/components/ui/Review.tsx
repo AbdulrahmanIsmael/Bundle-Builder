@@ -1,15 +1,15 @@
-import ReviewSection from "./components/ReviewSection";
-import ReviewItem from "./components/ReviewItem";
-import shieldIcon from "../../../assets/icons/shield.svg";
-import freeShippingIcon from "../../../assets/images/free-shipping.svg";
-import reviewBadge from "../../../assets/images/review-badge.png";
-
+import ReviewItem from "../shared/ReviewSection/components/ReviewItem";
+import ReviewSection from "../shared/ReviewSection/ReviewSection";
+import type { RootState } from "../../store/store";
+import camPanV3 from "../../assets/images/placeholder.webp";
 // Placeholder images
-import camV4 from "../../../assets/images/placeholder.webp";
-import camPanV3 from "../../../assets/images/placeholder.webp";
-import senseMotion from "../../../assets/images/placeholder.webp";
-import senseHub from "../../../assets/images/placeholder.webp";
-import sdCard from "../../../assets/images/placeholder.webp";
+import camV4 from "../../assets/images/placeholder.webp";
+import freeShippingIcon from "../../assets/images/free-shipping.svg";
+import reviewBadge from "../../assets/images/review-badge.png";
+import sdCard from "../../assets/images/placeholder.webp";
+import senseHub from "../../assets/images/placeholder.webp";
+import senseMotion from "../../assets/images/placeholder.webp";
+import { useSelector } from "react-redux";
 
 const dummyData = {
   cameras: [
@@ -61,16 +61,20 @@ const dummyData = {
 };
 
 const Review = () => {
+  const totalPrice = useSelector(
+    (state: RootState) => state.products.totalPrice,
+  );
+
   return (
-    <section className="bg-[#EDF4FF] px-[15px] py-8 w-full box-border">
+    <section className="bg-[#EDF4FF] px-[15px] pt-[15px] pb-8 w-full box-border">
+      <p className="text-[10px] tracking-[1.6px] text-[#484848] uppercase mb-2 font-medium">
+        Review
+      </p>
       <div className="mb-6">
-        <p className="text-[10px] tracking-[1px] text-[#666] uppercase mb-2 font-medium">
-          Review
-        </p>
-        <h2 className="text-[22px] font-bold text-[#111] mb-1.5 leading-tight">
+        <h2 className="text-[22px] font-semibold text-[#1F1F1F] mb-1.5">
           Your security system
         </h2>
-        <p className="text-[13px] text-[#555] leading-[1.4]">
+        <p className="text-[12px] text-[#1F1F1FBF] leading-[130%] font-medium">
           Review your personalized protection system designed to keep what
           matters most safe.
         </p>
@@ -121,24 +125,28 @@ const Review = () => {
 
       <ReviewSection title="Home Monitoring Plan">
         <ReviewItem
-          image={
-            <img src={shieldIcon} alt="Shield" className="w-5 h-5 opacity-80" />
-          }
           title={
-            <span className="flex items-center gap-1">
-              <span className="font-bold text-[#111]">Cam</span>
-              <span className="font-bold text-[#4e2fd2]">Unlimited</span>
-            </span>
+            <div className="flex items-center gap-1">
+              <img
+                src="/images/cam-unlimited-plan.svg"
+                alt="Shield"
+                className="w-5 h-5"
+              />
+              <span className="flex items-center gap-1 text-[14px] font-bold">
+                <span className="text-[#000000]">Cam</span>
+                <span className="text-primary">Unlimited</span>
+              </span>
+            </div>
           }
           originalPriceText="$12.99/mo"
           priceText="$9.99/mo"
         />
       </ReviewSection>
 
-      <div className="mb-6 border-b border-[#e5e7eb] pb-3">
+      <div className="border-t border-[#CED6DE] pb-1">
         <ReviewItem
           image={
-            <img src={freeShippingIcon} alt="Shipping" className="w-7 h-7" />
+            <img src={freeShippingIcon} alt="Shipping" className="w-10 h-10" />
           }
           title="Fast Shipping"
           originalPriceText="$5.99"
@@ -155,14 +163,14 @@ const Review = () => {
         />
 
         <div className="flex flex-col items-end pb-1">
-          <div className="bg-[#4e2fd2] text-white text-[11px] font-medium px-2 py-0.5 rounded-[4px] mb-2">
+          <div className="bg-primary text-white text-[12px] tracking-[-5%] font-medium px-2 py-[3px] rounded-[4px] mb-2">
             as low as $19.19/mo
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-[16px] text-[#777] line-through font-medium">
-              $238.81
+            <span className="text-[18px] leading-5 text-[#6F7882] line-through font-medium">
+              {totalPrice}
             </span>
-            <span className="text-[26px] font-bold text-[#4e2fd2] leading-none tracking-tight">
+            <span className="text-[24px] font-bold text-primary leading-8 tracking-tight">
               $187.89
             </span>
           </div>
@@ -170,13 +178,13 @@ const Review = () => {
       </div>
 
       <div className="text-center mt-6">
-        <p className="text-[13px] font-semibold text-[#0aa288] mb-4">
+        <p className="text-[12px] font-medium text-success mb-1.5 tracking-[-0.06px]">
           Congrats! You're saving $50.92 on your security bundle!
         </p>
-        <button className="w-full bg-[#4e2fd2] text-white rounded-[8px] py-3.5 text-[16px] font-bold mb-4 shadow-sm">
+        <button className="cursor-pointer w-full bg-primary text-white rounded-[5px] py-[13px] px-4 text-[17px] font-bold mb-2.5! shadow-sm">
           Checkout
         </button>
-        <button className="text-[13px] text-[#777] italic underline hover:text-[#333] transition-colors">
+        <button className="cursor-pointer text-[12px] text-[#484848] italic underline hover:text-[#333] transition-colors leading-[120%] font-normal">
           Save my system for later
         </button>
       </div>

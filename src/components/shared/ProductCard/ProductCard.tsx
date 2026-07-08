@@ -39,7 +39,7 @@ const ProductCard = ({
     >
       {/* Save Badge */}
       {hasDiscount && (
-        <span className="absolute top-[11px] left-[11px] z-10 bg-[#4e2fd2] text-white text-[11px] font-medium rounded-full px-2.5 py-1 tracking-wide">
+        <span className="absolute top-[11px] left-[11px] z-10 bg-primary text-white text-[11px] font-medium rounded-full px-2.5 py-1 tracking-wide">
           Save {Math.floor(product.discount)}%
         </span>
       )}
