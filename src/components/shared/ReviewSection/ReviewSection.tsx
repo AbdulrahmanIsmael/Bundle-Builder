@@ -8,7 +8,7 @@ interface I_reviewSectionProps {
 const ReviewSection = ({ title, children }: I_reviewSectionProps) => {
   return (
     <div>
-      <h4 className="text-[12px] font-normal text-[#A8B2BD] tracking-[3%] leading-4 uppercase border-t border-t-[#CED6DE] pt-[15px]">
+      <h4 className="text-[12px] font-normal text-[#A8B2BD] tracking-[3%] leading-4 uppercase border-t border-t-[#CED6DE] pt-3.75">
         {title}
       </h4>
       <div className="flex flex-col">{children}</div>

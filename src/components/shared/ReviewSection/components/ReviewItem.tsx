@@ -26,7 +26,7 @@ const ReviewItem = ({
     <div className="flex items-center justify-between py-3">
       <div className="flex items-center gap-3">
         {typeof image === "string" ? (
-          <div className="w-[41px] h-[41px] bg-white rounded-[5px] flex items-center justify-center shrink-0 border border-[#e5e7eb] overflow-hidden">
+          <div className="w-10.25 h-10.25 bg-white rounded-[5px] flex items-center justify-center shrink-0 border border-[#e5e7eb] overflow-hidden">
             <img
               src={image}
               alt=""
@@ -34,7 +34,7 @@ const ReviewItem = ({
             />
           </div>
         ) : image ? (
-          <div className="w-[41px] h-[41px] rounded-[5px] flex items-center justify-center shrink-0 overflow-hidden">
+          <div className="w-10.25 h-10.25 rounded-[5px] flex items-center justify-center shrink-0 overflow-hidden">
             {image}
           </div>
         ) : null}
@@ -47,12 +47,15 @@ const ReviewItem = ({
         {quantity !== undefined && onQuantityChange && (
           <QuantityStepper
             quantity={quantity}
-            setQuantity={onQuantityChange}
+            handleDecreaseQuantity={() =>
+              onQuantityChange(Math.max(0, quantity - 1))
+            }
+            handleIncreaseQuantity={() => onQuantityChange(quantity + 1)}
             btnBg="#FFFFFF"
           />
         )}
 
-        <div className="flex flex-col items-end min-w-[50px] leading-tight">
+        <div className="flex flex-col items-end min-w-12.5 leading-tight">
           {(originalPrice !== undefined && originalPrice > 0) ||
           originalPriceText ? (
             <span className="text-[12px] leading-4 tracking-[0.5%] text-[#888] line-through mb-0.5 font-medium">

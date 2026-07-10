@@ -1,17 +1,20 @@
-import type { T_camera } from "../../../../types/api-types";
 import type { Dispatch, SetStateAction } from "react";
+
+import type { T_product } from "../../../../types/api-types";
 
 function ProductVariants({
   product,
   activeVariant,
   setActiveVariant,
 }: {
-  product: T_camera;
+  product: T_product;
   activeVariant: number;
   setActiveVariant: Dispatch<SetStateAction<number>>;
 }) {
+  if (!product.variants?.length) return null;
+
   return (
-    <div className="flex items-center gap-1.5 mt-2 w-[63px] h-[26px]">
+    <div className="flex items-center gap-1.5 mt-2 w-15.75 h-6.5">
       {product.variants.map((variant, i) => (
         <button
           key={i}
@@ -19,7 +22,7 @@ function ProductVariants({
             e.stopPropagation();
             setActiveVariant(i);
           }}
-          className={`flex items-center gap-1.5 px-[3px] py-px rounded-[2px] tracking-[0.6px] font-medium text-[10px] cursor-pointer transition-all duration-150 ease-in-out border
+          className={`flex items-center gap-1.5 px-0.75 py-px rounded-xs tracking-[0.6px] font-medium text-[10px] cursor-pointer transition-all duration-150 ease-in-out border
                   ${
                     activeVariant === i
                       ? "border-[#0aa288] bg-[#1DF0BB0A] text-[#1F1F1F]"

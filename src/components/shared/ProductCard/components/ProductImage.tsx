@@ -1,4 +1,4 @@
-import type { T_camera } from "../../../../types/api-types";
+import type { T_product } from "../../../../types/api-types";
 import placeholderImage from "../../../../assets/images/placeholder.webp";
 
 function ProductImage({
@@ -10,16 +10,24 @@ function ProductImage({
   hasDiscount: boolean;
   hasVariants: boolean;
   activeVariant: number;
-  product: T_camera;
+  product: T_product;
 }) {
   return (
     <div
-      className={`w-[80px] sm:w-[100px] shrink-0 flex items-center justify-center ${hasDiscount ? "mt-[32px]" : "mt-2"}`}
+      className={`w-20 sm:w-25 shrink-0 flex items-center justify-center ${hasDiscount ? "mt-8" : "mt-2"}`}
     >
-      {hasVariants && product.variants[activeVariant]?.image ? (
+      {hasVariants &&
+      product.variants &&
+      product.variants[activeVariant]?.image ? (
         <img
           src={product.variants[activeVariant]?.image || placeholderImage}
           alt={`${product.title} - ${product.variants[activeVariant].color}`}
+          className="w-full h-auto object-contain"
+        />
+      ) : product?.image ? (
+        <img
+          src={product?.image || placeholderImage}
+          alt={`${product.title} image`}
           className="w-full h-auto object-contain"
         />
       ) : (
