@@ -12,13 +12,13 @@ function ProductPrice({
   //   quantity: number;
 }) {
   return (
-    <div className="flex flex-col items-end leading-none">
+    <div className="flex flex-col 2xl:flex-row items-end 2xl:items-center 2xl:gap-1 leading-none">
       {hasDiscount && (
-        <span className="text-[14px] text-[#D8392B] line-through font-normal tracking-[0.6px] mb-1">
+        <span className="text-sm md:text-base text-[#D8392B] line-through font-normal tracking-[0.6px]">
           ${product.price.toFixed(2)}
         </span>
       )}
-      <span className="text-[14px] font-medium text-[#575757] tracking-[0.6px]">
+      <span className="text-sm md:text-base text-[#575757] tracking-[0.6px]">
         {discountedPrice !== 0 ? `$${discountedPrice.toFixed(2)}` : "Free"}
       </span>
     </div>

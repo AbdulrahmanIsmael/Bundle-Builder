@@ -14,7 +14,7 @@ function ProductImage({
 }) {
   return (
     <div
-      className={`w-20 sm:w-25 shrink-0 flex items-center justify-center ${hasDiscount ? "mt-8" : "mt-2"}`}
+      className={`w-20 2xl:w-full shrink-0 flex items-center justify-center ${hasDiscount ? "mt-8 md:mt-6 2xl:mt-8" : "mt-2"}`}
     >
       {hasVariants &&
       product.variants &&

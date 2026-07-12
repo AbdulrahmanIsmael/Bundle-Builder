@@ -22,7 +22,7 @@ function QuantityStepper({
       >
         &minus;
       </button>
-      <span className="w-6 text-center text-[14px] font-medium text-[#0B0D10] h-full flex items-center justify-center">
+      <span className="w-6 text-center text-sm md:text-base font-medium text-[#0B0D10] h-full flex items-center justify-center">
         {quantity}
       </span>
       <button

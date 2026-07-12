@@ -107,11 +107,7 @@ const ProductCard = ({ product }: I_productCardProps) => {
 
     const priceWithDiscountPayload = {
       price: +product.price,
-      discount: getEffectiveDiscount(
-        section,
-        +product.id,
-        +product.discount,
-      ),
+      discount: getEffectiveDiscount(section, +product.id, +product.discount),
       quantity,
     };
 
@@ -179,11 +175,7 @@ const ProductCard = ({ product }: I_productCardProps) => {
 
     const priceWithDiscountPayload = {
       price: +product.price,
-      discount: getEffectiveDiscount(
-        section,
-        +product.id,
-        +product.discount,
-      ),
+      discount: getEffectiveDiscount(section, +product.id, +product.discount),
       quantity: 1,
     };
 
@@ -218,11 +210,7 @@ const ProductCard = ({ product }: I_productCardProps) => {
 
     const priceWithDiscountPayload = {
       price: +product.price,
-      discount: getEffectiveDiscount(
-        section,
-        +product.id,
-        +product.discount,
-      ),
+      discount: getEffectiveDiscount(section, +product.id, +product.discount),
       quantity: 1,
     };
 
@@ -261,16 +249,16 @@ const ProductCard = ({ product }: I_productCardProps) => {
   return (
     <div
       onClick={handleProductSelection}
-      className={`relative flex items-stretch gap-3 sm:gap-4.75 w-full min-h-39.75 rounded-[10px] p-3 sm:p-2.75 bg-white cursor-pointer box-border transition-all duration-200 ease-in-out
-        ${
-          isSelected
-            ? "border-2 border-[#4E2FD2B2]"
-            : "border-2 border-[rgba(220,220,220,0.8)] shadow-[0_1px_4px_rgba(0,0,0,0.06)]"
-        }`}
+      className={`relative flex flex-row 2xl:flex-col items-stretch w-full h-full overflow-hidden! gap-3 md:gap-2 2xl:gap-4.75 min-h-39.75 md:min-h-0 2xl:min-h-39.75 rounded-[10px] p-3 sm:p-2.75 bg-white cursor-pointer box-border transition-all duration-200 ease-in-out
+      ${
+        isSelected
+          ? "border-2 border-[#4E2FD2B2]"
+          : "border-2 border-[rgba(220,220,220,0.8)] shadow-[0_1px_4px_rgba(0,0,0,0.06)]"
+      }`}
     >
       {/* Save Badge */}
       {hasDiscount && (
-        <span className="absolute top-2.75 left-2.75 z-10 bg-primary text-white text-[11px] font-medium rounded-full px-2.5 py-1 tracking-wide">
+        <span className="absolute top-2.75 left-2.75 z-10 bg-primary text-white text-[11px] md:text-xs font-medium rounded-full px-2.5 py-1 tracking-wide">
           {discountedPrice !== 0
             ? `Save ${Math.floor(product.discount)}%`
             : "Free"}
@@ -287,16 +275,16 @@ const ProductCard = ({ product }: I_productCardProps) => {
 
       {/* Info Section */}
       <div
-        className={`flex flex-col flex-1 gap-2 ${isPlanSection ? "gap-4" : "gap-2"}`}
+        className={`flex flex-col flex-1 gap-2 md:gap-1.5 2xl:gap-2 ${isPlanSection ? "md:gap-3 2xl:gap-4" : ""}`}
       >
         {/* Title */}
-        <h3 className="text-[14px] font-semibold text-[rgba(31, 31, 31, 1)]">
+        <h3 className="text-[14px] md:text-base font-semibold text-[rgba(31, 31, 31, 1)]">
           {product.title}
         </h3>
 
         {/* Description + Learn More */}
-        <p className="text-[12px] font-medium text-[rgba(31, 31, 31, 0.75)] leading-[130%]">
-          {product.desc} <br className="sm:hidden" />
+        <p className="max-w-75 text-[12px] font-medium text-[rgba(31, 31, 31, 0.75)] leading-[130%]">
+          {product.desc}{" "}
           <a
             href="#"
             onClick={(e) => e.stopPropagation()}
@@ -317,7 +305,7 @@ const ProductCard = ({ product }: I_productCardProps) => {
 
         {/* Quantity + Price */}
         <div
-          className={`${isPlanSection ? "absolute bottom-5 right-5" : ""} flex items-end justify-between mt-auto pt-3`}
+          className={`${isPlanSection ? "md:relative 2xl:absolute bottom-5 right-5" : ""} flex items-end justify-between mt-auto pt-3 md:pt-2 2xl:pt-3`}
         >
           {/* Quantity Stepper */}
           {!isPlanSection && (

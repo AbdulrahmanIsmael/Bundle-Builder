@@ -14,7 +14,7 @@ function ProductVariants({
   if (!product.variants?.length) return null;
 
   return (
-    <div className="flex items-center gap-1.5 mt-2 w-15.75 h-6.5">
+    <div className="flex items-center gap-1.5 mt-2 md:w-full overflow-x-auto">
       {product.variants.map((variant, i) => (
         <button
           key={i}
@@ -22,17 +22,14 @@ function ProductVariants({
             e.stopPropagation();
             setActiveVariant(i);
           }}
-          className={`flex items-center gap-1.5 px-0.75 py-px rounded-xs tracking-[0.6px] font-medium text-[10px] cursor-pointer transition-all duration-150 ease-in-out border
+          className={`flex items-center px-0.75 md:px-1 py-px md:py-0.5 rounded-xs tracking-[0.6px] font-semibold text-[10px]! cursor-pointer transition-all duration-150 ease-in-out border overflow-hidden! whitespace-nowrap text-ellipsis
                   ${
                     activeVariant === i
                       ? "border-[#0aa288] bg-[#1DF0BB0A] text-[#1F1F1F]"
                       : "border-[#e0e0e0] bg-white text-[#555]"
                   }`}
         >
-          <span
-            className="w-2.5 h-2.5 rounded-full border border-black/15 shrink-0"
-            style={{ background: variant.color.toLowerCase() }}
-          />
+          <img src={variant.image} alt="" className="max-w-100% w-3 md:w-5.5" />
           {variant.color}
         </button>
       ))}

@@ -52,7 +52,7 @@ const Accordions = () => {
 
   return (
     <section>
-      <ul className="flex flex-col gap-2.5">
+      <ul className="flex flex-col">
         {Object.values(accordionDetails).map((accordion, index, array) => {
           let currentProducts: T_product[] = [];
           switch (accordion.section) {

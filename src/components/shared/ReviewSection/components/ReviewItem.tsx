@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
 import QuantityStepper from "../../ProductCard/components/QuantityStepper";
+import type { ReactNode } from "react";
 
 interface I_reviewItemProps {
   image?: string | ReactNode;
@@ -30,7 +30,7 @@ const ReviewItem = ({
             <img
               src={image}
               alt=""
-              className="w-[85%] h-[85%] object-contain"
+              className="w-[85%] h-[85%] 2xl:w-full 2xl:h-full object-contain"
             />
           </div>
         ) : image ? (
@@ -38,12 +38,12 @@ const ReviewItem = ({
             {image}
           </div>
         ) : null}
-        <span className="text-[12px] leading-4 tracking-[0.5%] font-medium text-[#0B0D10]">
+        <span className="text-xs 2xl:text-lg leading-4 tracking-[0.5%] font-medium text-[#0B0D10]">
           {title}
         </span>
       </div>
 
-      <div className={`flex text-center gap-2`}>
+      <div className={`flex text-center gap-3`}>
         {quantity !== undefined && onQuantityChange && (
           <QuantityStepper
             quantity={quantity}
@@ -55,19 +55,19 @@ const ReviewItem = ({
           />
         )}
 
-        <div className="flex flex-col items-end min-w-12.5 leading-tight">
+        <div className="flex flex-col 2xl:flex-row 2xl:items-center 2xl:gap-3 items-end min-w-12.5 leading-tight">
           {(originalPrice !== undefined && originalPrice > 0) ||
           originalPriceText ? (
-            <span className="text-[12px] leading-4 tracking-[0.5%] text-[#888] line-through mb-0.5 font-medium">
+            <span className="text-xs 2xl:text-base leading-4 tracking-[0.5%] text-[#888] line-through font-medium">
               {originalPriceText || `$${originalPrice?.toFixed(2)}`}
             </span>
           ) : null}
           {priceText ? (
-            <span className="text-[13px] font-semibold text-primary uppercase">
+            <span className="text-[13px] 2xl:text-base font-semibold text-primary uppercase">
               {priceText}
             </span>
           ) : price !== undefined ? (
-            <span className="text-[12px] leading-4 tracking-[0.5%] font-semibold text-primary">
+            <span className="text-xs 2xl:text-base leading-4 tracking-[0.5%] font-semibold text-primary">
               ${price.toFixed(2)}
             </span>
           ) : null}
