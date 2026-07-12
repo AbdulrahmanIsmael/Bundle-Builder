@@ -1,13 +1,6 @@
 import type { I_products, T_product } from "../../types/api-types";
-import {
-  addProduct,
-  decreaseTotalPrice,
-  decreaseTotalPriceWithDiscount,
-  increaseTotalPrice,
-  increaseTotalPriceWithDiscount,
-  removeProduct,
-} from "../../store/features/products/productsSlice";
-import { useDispatch, useSelector } from "react-redux";
+import type { T_ReviewItem } from "../../types/ui-types";
+import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 
 import ReviewItem from "../shared/ReviewSection/components/ReviewItem";
@@ -18,43 +11,46 @@ import { getProducts } from "../../utils/api";
 import reviewBadge from "../../assets/images/review-badge.png";
 
 import { store } from "../../store/store";
-
 import { toast } from "sonner";
+
+import useProduct, { isRequiredSensor } from "../../hooks/useProduct";
 
 const getDiscountedPrice = (product: T_product) => {
   return product.price - (product.price * product.discount) / 100;
 };
 
-const isRequiredSensor = (section: string, productId: number) => {
-  return section.toLowerCase() === "sensors" && productId === 1;
-};
+const CartReviewItem = ({ item }: { item: T_ReviewItem }) => {
+  const activeVariantIndex =
+    item.product.variants?.findIndex(
+      (v) => v.color.toLowerCase() === item.selectedItem.variant.toLowerCase(),
+    ) ?? 0;
+  const resolvedVariantIndex =
+    activeVariantIndex === -1 ? 0 : activeVariantIndex;
 
-const getChargeableQuantityAmount = (
-  section: string,
-  productId: number,
-  oldQuantity: number,
-  newQuantity: number,
-  hasCameraSelection: boolean,
-) => {
-  if (!isRequiredSensor(section, productId)) {
-    return newQuantity - oldQuantity;
-  }
+  const { handleIncreaseQuantity, handleDecreaseQuantity } = useProduct({
+    product: item.product,
+    section: item.section,
+    activeVariant: resolvedVariantIndex,
+    hasVariants: item.hasVariants,
+  });
 
-  const freeAllowance = hasCameraSelection ? 1 : 0;
   return (
-    Math.max(0, newQuantity - freeAllowance) -
-    Math.max(0, oldQuantity - freeAllowance)
+    <ReviewItem
+      image={item.image}
+      title={item.title}
+      quantity={item.quantity}
+      onQuantityChange={(nextQuantity) => {
+        if (nextQuantity > item.quantity) handleIncreaseQuantity();
+        else if (nextQuantity < item.quantity) handleDecreaseQuantity();
+      }}
+      originalPrice={item.originalPrice}
+      price={item.price}
+      priceText={item.priceText}
+    />
   );
 };
 
 const Review = () => {
-  const dispatch = useDispatch();
-  const totalPrice = useSelector(
-    (state: RootState) => state.products.totalPrice,
-  );
-  const priceAfterDiscount = useSelector(
-    (state: RootState) => state.products.totalPriceWithDiscount,
-  );
   const selectedCameras = useSelector(
     (state: RootState) => state.products.cameras,
   );
@@ -118,11 +114,23 @@ const Review = () => {
       if (!product || selectedItem.quantity <= 0) return [];
 
       const discountedPrice = getDiscountedPrice(product);
-      const isFreeSensor =
-        isRequiredSensor(section, product.id) &&
-        selectedCamerasCount > 0 &&
-        selectedItem.quantity <= 1;
-      const finalPrice = isFreeSensor ? 0 : discountedPrice;
+
+      const isRequired = isRequiredSensor(section, product.id);
+      const isFreeEligible = isRequired && selectedCamerasCount > 0;
+
+      const chargeableQuantity = isFreeEligible
+        ? Math.max(0, selectedItem.quantity - 1)
+        : selectedItem.quantity;
+
+      const lineItemFinalPrice = discountedPrice * chargeableQuantity;
+
+      // We will show the UNIT price if quantity is 1, or if it's not a mixed free/paid situation.
+      // But if they have 2, 1 free, 1 paid, it's better to show the average unit price? Or just the final unit price.
+      // Actually, if they have multiple, the "price" display is usually the unit price. We can just use the final price for display.
+      // The original code used finalPrice = 0 if quantity <= 1 and free.
+      const finalPrice =
+        isFreeEligible && selectedItem.quantity === 1 ? 0 : discountedPrice;
+
       const selectedVariant = product.variants?.find(
         (variant) =>
           variant.color.toLowerCase() === selectedItem.variant.toLowerCase(),
@@ -140,13 +148,15 @@ const Review = () => {
           title: displayTitle,
           quantity: selectedItem.quantity,
           image: reviewImage,
-          originalPrice: product.price,
+          originalPrice:
+            product.price !== finalPrice ? product.price : undefined,
           price: finalPrice,
           priceText: finalPrice === 0 ? "FREE" : undefined,
           section,
           selectedItem,
           hasVariants: Boolean(product.variants?.length),
           product,
+          lineItemFinalPrice, // added for total calculation
         },
       ];
     });
@@ -169,88 +179,20 @@ const Review = () => {
     "accessories",
   );
 
-  const handleQuantityChange = (
-    section: "cameras" | "plans" | "sensors" | "accessories",
-    selectedItem: { productId: number; quantity: number; variant: string },
-    nextQuantity: number,
-    hasVariants: boolean,
-    product?: T_product,
-  ) => {
-    const payload = {
-      productId: selectedItem.productId,
-      variant: selectedItem.variant,
-      hasVariants,
-      section,
-    };
-
-    const hasCameraSelection = selectedCamerasCount > 0;
-    const minimumQuantity =
-      isRequiredSensor(section, selectedItem.productId) && hasCameraSelection
-        ? 1
-        : 0;
-    const safeNextQuantity = Math.max(minimumQuantity, nextQuantity);
-
-    if (safeNextQuantity !== nextQuantity) {
-      toast.error("At least 1 sensor is required for a camera!", {
-        description: "The first sensor is free!",
-        style: {
-          backgroundColor: "#FEF2F2",
-          color: "#B91C1C",
-          border: "1px solid #FCA5A5",
-          fontWeight: "semibold",
-        },
-        duration: 2500,
-      });
-    }
-
-    const quantityChangeAmount = getChargeableQuantityAmount(
-      section,
-      selectedItem.productId,
-      selectedItem.quantity,
-      safeNextQuantity,
-      hasCameraSelection,
-    );
-
-    const effectiveDiscount = isRequiredSensor(section, selectedItem.productId)
-      ? 0
-      : (product?.discount ?? 0);
-
-    if (safeNextQuantity > selectedItem.quantity) {
-      dispatch(addProduct(payload));
-      if (product && quantityChangeAmount > 0) {
-        dispatch(
-          increaseTotalPrice({
-            price: product.price,
-            quantity: quantityChangeAmount,
-          }),
-        );
-        dispatch(
-          increaseTotalPriceWithDiscount({
-            price: product.price,
-            discount: effectiveDiscount,
-            quantity: quantityChangeAmount,
-          }),
-        );
-      }
-    } else if (safeNextQuantity < selectedItem.quantity) {
-      dispatch(removeProduct(payload));
-      if (product && quantityChangeAmount < 0) {
-        dispatch(
-          decreaseTotalPrice({
-            price: product.price,
-            quantity: Math.abs(quantityChangeAmount),
-          }),
-        );
-        dispatch(
-          decreaseTotalPriceWithDiscount({
-            price: product.price,
-            discount: effectiveDiscount,
-            quantity: Math.abs(quantityChangeAmount),
-          }),
-        );
-      }
-    }
-  };
+  const allItems = [
+    ...cameraItems,
+    ...planItems,
+    ...sensorItems,
+    ...accessoryItems,
+  ];
+  const totalPrice = allItems.reduce(
+    (sum, item) => sum + item.product.price * item.quantity,
+    0,
+  );
+  const priceAfterDiscount = allItems.reduce(
+    (sum, item) => sum + item.lineItemFinalPrice,
+    0,
+  );
 
   return (
     <section className="bg-[#EDF4FF] px-3.75 2xl:px-10 pt-3.75 2xl:pt-8 pb-8 w-full box-border rounded-none md:rounded-lg 2xl:rounded-[10px]">
@@ -273,24 +215,7 @@ const Review = () => {
           {cameraItems.length > 0 ? (
             <ReviewSection title="Cameras">
               {cameraItems.map((item) => (
-                <ReviewItem
-                  key={item.id}
-                  image={item.image}
-                  title={item.title}
-                  quantity={item.quantity}
-                  onQuantityChange={(nextQuantity) =>
-                    handleQuantityChange(
-                      item.section,
-                      item.selectedItem,
-                      nextQuantity,
-                      item.hasVariants,
-                      item.product,
-                    )
-                  }
-                  originalPrice={item.originalPrice}
-                  price={item.price}
-                  priceText={item.priceText}
-                />
+                <CartReviewItem key={item.id} item={item} />
               ))}
             </ReviewSection>
           ) : null}
@@ -298,24 +223,7 @@ const Review = () => {
           {sensorItems.length > 0 ? (
             <ReviewSection title="Sensors">
               {sensorItems.map((item) => (
-                <ReviewItem
-                  key={item.id}
-                  image={item.image}
-                  title={item.title}
-                  quantity={item.quantity}
-                  onQuantityChange={(nextQuantity) =>
-                    handleQuantityChange(
-                      item.section,
-                      item.selectedItem,
-                      nextQuantity,
-                      item.hasVariants,
-                      item.product,
-                    )
-                  }
-                  originalPrice={item.originalPrice}
-                  price={item.price}
-                  priceText={item.priceText}
-                />
+                <CartReviewItem key={item.id} item={item} />
               ))}
             </ReviewSection>
           ) : null}
@@ -323,24 +231,7 @@ const Review = () => {
           {accessoryItems.length > 0 ? (
             <ReviewSection title="Accessories">
               {accessoryItems.map((item) => (
-                <ReviewItem
-                  key={item.id}
-                  image={item.image}
-                  title={item.title}
-                  quantity={item.quantity}
-                  onQuantityChange={(nextQuantity) =>
-                    handleQuantityChange(
-                      item.section,
-                      item.selectedItem,
-                      nextQuantity,
-                      item.hasVariants,
-                      item.product,
-                    )
-                  }
-                  originalPrice={item.originalPrice}
-                  price={item.price}
-                  priceText={item.priceText}
-                />
+                <CartReviewItem key={item.id} item={item} />
               ))}
             </ReviewSection>
           ) : null}
@@ -348,24 +239,7 @@ const Review = () => {
           {planItems.length > 0 ? (
             <ReviewSection title="Home Monitoring Plan">
               {planItems.map((item) => (
-                <ReviewItem
-                  key={item.id}
-                  image={item.image}
-                  title={item.title}
-                  quantity={item.quantity}
-                  onQuantityChange={(nextQuantity) =>
-                    handleQuantityChange(
-                      item.section,
-                      item.selectedItem,
-                      nextQuantity,
-                      item.hasVariants,
-                      item.product,
-                    )
-                  }
-                  originalPrice={item.originalPrice}
-                  price={item.price}
-                  priceText={item.priceText}
-                />
+                <CartReviewItem key={item.id} item={item} />
               ))}
             </ReviewSection>
           ) : null}
@@ -389,7 +263,7 @@ const Review = () => {
         {/* Checkout column */}
         <div className="md:w-90 md:shrink-0 2xl:shrink 2xl:w-full 2xl:flex-1 flex flex-col justify-end 2xl:justify-start">
           {/* Badge + returns copy */}
-          <div className="flex items-center justify-between gap-6.25 mb-6">
+          <div className="flex items-center justify-between 2xl:justify-start gap-6.25 mb-6">
             <img
               src={reviewBadge}
               alt="100% Satisfaction Guarantee"
@@ -452,10 +326,46 @@ const Review = () => {
           </div>
 
           <p className="text-xs 2xl:text-sm font-medium text-success mb-1 tracking-[-0.06px] text-center">
-            Congrats! You&apos;re saving $50.92 on your security bundle!
+            Congrats! You&apos;re saving $
+            {(totalPrice - priceAfterDiscount).toFixed(2)} on your security
+            bundle!
           </p>
 
-          <button className="cursor-pointer w-full bg-primary text-white rounded-[5px] py-3.25 px-4 text-[17px] font-bold mb-2.5! shadow-sm">
+          <button
+            className="cursor-pointer w-full bg-primary text-white rounded-[5px] py-3.25 px-4 text-[17px] font-bold mb-2.5! shadow-sm"
+            onClick={() => {
+              const hasCameras = selectedCameras.some((item) => item.quantity > 0);
+              const hasPlans = selectedPlans.some((item) => item.quantity > 0);
+              const hasSensors = selectedSensors.some((item) => item.quantity > 0);
+
+              if (!hasCameras || !hasPlans || !hasSensors) {
+                toast.error("Incomplete System", {
+                  description: "Please select at least one camera, sensor, and plan to proceed with checkout.",
+                  style: {
+                    backgroundColor: "#FFF6E5",
+                    border: "1px solid #F6AD55",
+                    color: "#9C541E",
+                    fontWeight: "semibold",
+                    fontSize: "1rem",
+                  },
+                  duration: 3500,
+                });
+                return;
+              }
+
+              toast.success("Thanks for testing!", {
+                description: "Checkout flow not implemented yet.",
+                style: {
+                  backgroundColor: "#DEF7EC",
+                  border: "1px solid #319795",
+                  color: "#03543F",
+                  fontWeight: "semibold",
+                  fontSize: "1rem",
+                },
+                duration: 2000,
+              });
+            }}
+          >
             Checkout
           </button>
           <button
