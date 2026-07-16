@@ -5,7 +5,7 @@ export type T_ReviewItem = {
   title: string;
   quantity: number;
   image: string;
-  originalPrice: number;
+  originalPrice?: number;
   price: number;
   priceText?: string;
   section: "cameras" | "plans" | "sensors" | "accessories";

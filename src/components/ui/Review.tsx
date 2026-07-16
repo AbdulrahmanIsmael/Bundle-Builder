@@ -1,19 +1,17 @@
 import type { I_products, T_product } from "../../types/api-types";
-import type { T_ReviewItem } from "../../types/ui-types";
-import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
+import useProduct, { isRequiredSensor } from "../../hooks/useProduct";
 
 import ReviewItem from "../shared/ReviewSection/components/ReviewItem";
 import ReviewSection from "../shared/ReviewSection/ReviewSection";
 import type { RootState } from "../../store/store";
+import type { T_ReviewItem } from "../../types/ui-types";
 import freeShippingIcon from "../../assets/images/free-shipping.svg";
 import { getProducts } from "../../utils/api";
 import reviewBadge from "../../assets/images/review-badge.png";
-
 import { store } from "../../store/store";
 import { toast } from "sonner";
-
-import useProduct, { isRequiredSensor } from "../../hooks/useProduct";
+import { useSelector } from "react-redux";
 
 const getDiscountedPrice = (product: T_product) => {
   return product.price - (product.price * product.discount) / 100;
@@ -334,13 +332,18 @@ const Review = () => {
           <button
             className="cursor-pointer w-full bg-primary text-white rounded-[5px] py-3.25 px-4 text-[17px] font-bold mb-2.5! shadow-sm"
             onClick={() => {
-              const hasCameras = selectedCameras.some((item) => item.quantity > 0);
+              const hasCameras = selectedCameras.some(
+                (item) => item.quantity > 0,
+              );
               const hasPlans = selectedPlans.some((item) => item.quantity > 0);
-              const hasSensors = selectedSensors.some((item) => item.quantity > 0);
+              const hasSensors = selectedSensors.some(
+                (item) => item.quantity > 0,
+              );
 
               if (!hasCameras || !hasPlans || !hasSensors) {
                 toast.error("Incomplete System", {
-                  description: "Please select at least one camera, sensor, and plan to proceed with checkout.",
+                  description:
+                    "Please select at least one camera, sensor, and plan to proceed with checkout.",
                   style: {
                     backgroundColor: "#FFF6E5",
                     border: "1px solid #F6AD55",
