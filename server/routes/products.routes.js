@@ -1,14 +1,14 @@
-const express = require("express");
-
-const router = express.Router();
-
-const {
-  getProducts,
+import {
+  getAccessories,
   getCameras,
   getPlans,
+  getProducts,
   getSensors,
-  getAccessories,
-} = require("../controllers/products.controller");
+} from "../controllers/products.controller";
+
+import express from "express";
+
+const router = express.Router();
 
 router.get("/", getProducts);
 
@@ -22,4 +22,4 @@ router.get("/sensors", getSensors);
 
 router.get("/accessories", getAccessories);
 
-module.exports = router;
+export default router;

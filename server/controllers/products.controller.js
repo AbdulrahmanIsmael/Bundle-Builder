@@ -1,22 +1,22 @@
-const products = require("../data/products.json");
+import products from "../data/products.json";
 
-exports.getProducts = (req, res, next) => {
+export const getProducts = (req, res, next) => {
   console.log(products.cameras);
   res.json(products);
 };
 
-exports.getCameras = (req, res, next) => {
+export const getCameras = (req, res, next) => {
   res.json(products.cameras);
 };
 
-exports.getPlans = (req, res, next) => {
+export const getPlans = (req, res, next) => {
   res.json(products.plans);
 };
 
-exports.getSensors = (req, res, next) => {
+export const getSensors = (req, res, next) => {
   res.json(products.sensors);
 };
 
-exports.getAccessories = (req, res, next) => {
+export const getAccessories = (req, res, next) => {
   res.json(products.accessories);
 };

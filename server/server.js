@@ -1,10 +1,8 @@
-const express = require("express");
-const cors = require("cors");
+import cors from "cors";
+import express from "express";
+import productRouter from "./routes/products.routes.JS";
 
 const app = express();
-
-// routers
-const productsRouter = require("./routes/products.routes");
 
 const PORT = 5000;
 
@@ -21,4 +19,4 @@ app.use((req, res) => {
   });
 });
 
-module.exports = app;
+export default app;
