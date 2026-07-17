@@ -68,6 +68,15 @@ npm run dev
 
 Open [http://localhost:5173](http://localhost:5173) in your browser.
 
+## Deployment Notes (Vercel)
+
+- Backend uses Express as a Vercel Serverless Function.
+- Entry point: `api/[...path].js`
+- Backend uses ES Modules.
+- JSON imports use:
+  import data from "./file.json" with { type: "json" };
+- Local imports require the `.js` extension.
+
 ## 5. Future Improvements
 
 - **Database Integration:** Using a database and Sequelize to store and manage products and orders.
