@@ -4,7 +4,7 @@ import {
   getPlans,
   getProducts,
   getSensors,
-} from "../controllers/products.controller";
+} from "../controllers/products.controller.js";
 
 import express from "express";
 

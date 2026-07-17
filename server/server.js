@@ -1,15 +1,13 @@
 import cors from "cors";
 import express from "express";
-import productRouter from "./routes/products.routes.JS";
+import productRouter from "./routes/products.routes.js";
 
 const app = express();
-
-const PORT = 5000;
 
 app.use(cors());
 app.use(express.json());
 
-app.use("/api", productsRouter);
+app.use("/api", productRouter);
 
 // handle unregistered routes
 app.use((req, res) => {
