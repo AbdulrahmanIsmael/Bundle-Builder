@@ -1,4 +1,4 @@
-import products from "../data/products.json";
+import products from "../data/products.json" with { type: "json" };
 
 export const getProducts = (req, res, next) => {
   console.log(products.cameras);
