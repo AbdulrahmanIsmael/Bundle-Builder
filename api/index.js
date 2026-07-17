@@ -2,8 +2,6 @@
 
 // module.exports = app;
 
-export default function handler(req, res) {
-  return res.status(200).json({
-    works: true,
-  });
-}
+import app from "../server/server";
+
+export default app;
