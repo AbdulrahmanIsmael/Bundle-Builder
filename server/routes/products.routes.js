@@ -7,8 +7,10 @@ const {
   getCameras,
   getPlans,
   getSensors,
-  getAccessories
+  getAccessories,
 } = require("../controllers/products.controller");
+
+router.get("/", getProducts);
 
 router.get("/products", getProducts);
 
@@ -18,6 +20,6 @@ router.get("/plans", getPlans);
 
 router.get("/sensors", getSensors);
 
-router.get("/accessories", getAccessories)
+router.get("/accessories", getAccessories);
 
 module.exports = router;
